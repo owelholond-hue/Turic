@@ -593,7 +593,9 @@ document.addEventListener('keydown', (e) => {
 
         try {
             const formData = new FormData(contactForm);
-            const response = await fetch(contactForm.action, {
+            
+            // ИСПРАВЛЕННАЯ СТРОКА ЗДЕСЬ:
+            const response = await fetch('https://formsubmit.co/ajax/shuppe123@inbox.ru', {
                 method: 'POST',
                 body: formData,
                 headers: { 'Accept': 'application/json' }
