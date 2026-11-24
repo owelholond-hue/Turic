@@ -539,12 +539,7 @@ document.addEventListener('keydown', (e) => {
 });
 
 /* =========================================================
-   12. ОТПРАВКА ФОРМЫ НА ПОЧТУ (FormSubmit)
-   =========================================================
-   ВАЖНО: в index.html в теге <form action="...">
-   замените email на свой.
-   При первой отправке FormSubmit попросит подтвердить email
-   (придёт письмо — нажмите «Activate Form»).
+   12. ОТПРАВКА ФОРМЫ В TELEGRAM
    ========================================================= */
 (function initContactForm() {
     const contactForm = document.getElementById('contactForm');
@@ -585,20 +580,26 @@ document.addEventListener('keydown', (e) => {
             return;
         }
 
-        // Отправка через FormSubmit (AJAX)
         const submitBtn = contactForm.querySelector('button[type="submit"]');
         const originalText = submitBtn.textContent;
         submitBtn.disabled = true;
         submitBtn.textContent = 'Отправка...';
 
+        // ВАШИ ДАННЫЕ ИЗ TELEGRAM
+        const TG_TOKEN = '9125330263:AAHDK0MmPHTk29WsQi0BgEilKYgIZxkOCEY';
+        const TG_CHAT_ID = '1124885647';          // Например: 123456789
+
+        // Текст сообщения
+        const text = `🔔 Новая заявка с сайта!\n\n👤 Имя: ${name.value.trim()}\n📞 Телефон: ${phone.value.trim()}\n✉️ Email: ${email.value.trim()}`;
+
         try {
-            const formData = new FormData(contactForm);
-            
-            // ИСПРАВЛЕННАЯ СТРОКА ЗДЕСЬ:
-            const response = await fetch('https://formsubmit.co/ajax/shuppe123@inbox.ru', {
+            const response = await fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage`, {
                 method: 'POST',
-                body: formData,
-                headers: { 'Accept': 'application/json' }
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    chat_id: TG_CHAT_ID,
+                    text: text
+                })
             });
 
             if (response.ok) {
@@ -608,13 +609,14 @@ document.addEventListener('keydown', (e) => {
                     setTimeout(() => successMsg.classList.remove('show'), 5000);
                 }
                 announce('Заявка отправлена. Спасибо!');
-                showToast('Спасибо! Заявка отправлена на почту.');
+                showToast('Спасибо! Заявка отправлена.');
             } else {
                 throw new Error('Ошибка сервера');
             }
         } catch (err) {
             announce('Не удалось отправить заявку');
             showToast('Ошибка отправки. Попробуйте позже.');
+            console.error(err);
         } finally {
             submitBtn.disabled = false;
             submitBtn.textContent = originalText;
