@@ -539,7 +539,7 @@ document.addEventListener('keydown', (e) => {
 });
 
 /* =========================================================
-   12. ОТПРАВКА ФОРМЫ В TELEGRAM
+   12. ОТПРАВКА ФОРМЫ В TELEGRAM (БЕЗ СТРОГОЙ JS-ВАЛИДАЦИИ)
    ========================================================= */
 (function initContactForm() {
     const contactForm = document.getElementById('contactForm');
@@ -549,34 +549,13 @@ document.addEventListener('keydown', (e) => {
     contactForm.addEventListener('submit', async (e) => {
         e.preventDefault();
 
-        // Валидация
         const name = document.getElementById('name');
         const phone = document.getElementById('phone');
         const email = document.getElementById('email');
-        let valid = true;
-        let firstInvalid = null;
 
-        if (name.value.trim().length < 2) {
-            setError(name, 'Введите имя, минимум 2 символа');
-            valid = false;
-            firstInvalid = firstInvalid || name;
-        } else setError(name, '');
-
-        if (!validatePhone(phone.value)) {
-            setError(phone, 'Введите корректный номер телефона');
-            valid = false;
-            firstInvalid = firstInvalid || phone;
-        } else setError(phone, '');
-
-        if (!validateEmail(email.value)) {
-            setError(email, 'Введите корректный email');
-            valid = false;
-            firstInvalid = firstInvalid || email;
-        } else setError(email, '');
-
-        if (!valid) {
-            announce('Форма содержит ошибки. Проверьте поля.');
-            if (firstInvalid) firstInvalid.focus();
+        // Простая проверка на пустоту (чтобы не отправлять совсем пустую форму)
+        if (!name.value.trim() || !phone.value.trim() || !email.value.trim()) {
+            showToast('Пожалуйста, заполните все поля.');
             return;
         }
 
@@ -587,9 +566,8 @@ document.addEventListener('keydown', (e) => {
 
         // ВАШИ ДАННЫЕ ИЗ TELEGRAM
         const TG_TOKEN = '9125330263:AAHDK0MmPHTk29WsQi0BgEilKYgIZxkOCEY';
-        const TG_CHAT_ID = '1124885647';          // Например: 123456789
+        const TG_CHAT_ID = '1124885647';
 
-        // Текст сообщения
         const text = `🔔 Новая заявка с сайта!\n\n👤 Имя: ${name.value.trim()}\n📞 Телефон: ${phone.value.trim()}\n✉️ Email: ${email.value.trim()}`;
 
         try {
@@ -608,14 +586,12 @@ document.addEventListener('keydown', (e) => {
                     successMsg.classList.add('show');
                     setTimeout(() => successMsg.classList.remove('show'), 5000);
                 }
-                announce('Заявка отправлена. Спасибо!');
                 showToast('Спасибо! Заявка отправлена.');
             } else {
-                throw new Error('Ошибка сервера');
+                throw new Error('Ошибка сервера Telegram');
             }
         } catch (err) {
-            announce('Не удалось отправить заявку');
-            showToast('Ошибка отправки. Попробуйте позже.');
+            showToast('Ошибка отправки. Проверьте интернет.');
             console.error(err);
         } finally {
             submitBtn.disabled = false;
