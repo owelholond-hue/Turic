@@ -156,18 +156,13 @@
                 <h2 class="section__title" id="contact-title">Оставьте заявку</h2>
                 <p class="section__subtitle" id="contact-desc">Мы перезвоним в течение 15 минут</p>
 
-                
+                <!-- ИЗМЕНЕНО: Убрали action, оставили только id, novalidate и aria-атрибуты -->
                 <form class="form"
                       id="contactForm"
-                      action="https://formsubmit.co/shuppe123@inbox.ru"
-                      method="POST"
                       novalidate
                       aria-describedby="contact-desc"
                       aria-labelledby="contact-title">
-                    <input type="hidden" name="_subject" value="Новая заявка с сайта «Вершина»">
-                    <input type="hidden" name="_captcha" value="false">
-                    <input type="hidden" name="_template" value="table">
-
+                    
                     <div class="form__group">
                         <label for="name">Ваше имя <span aria-hidden="true">*</span></label>
                         <input type="text" id="name" name="name" placeholder="Иван Иванов" autocomplete="name" required aria-required="true" aria-describedby="name-error">
@@ -190,7 +185,7 @@
         </section>
     </main>
 
-    
+    <!-- ПОДВАЛ -->
     <footer class="footer" role="contentinfo">
         <div class="container footer__inner">
             <div class="footer__col">
@@ -205,7 +200,6 @@
             </div>
             <div class="footer__col">
                 <h4>Соцсети</h4>
-                
                 <a href="https://t.me/@homipc03" target="_blank" rel="noopener noreferrer" class="footer__link footer__link--telegram" aria-label="Написать нам в Telegram (откроется в новой вкладке)">
                     <span class="footer__icon" aria-hidden="true">✈️</span> Telegram
                 </a>
@@ -220,7 +214,7 @@
         <p class="footer__copy">© 2026 Туристический клуб «Вершина»</p>
     </footer>
 
-
+    <!-- МОДАЛЬНОЕ ОКНО -->
     <div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title" aria-describedby="modal-desc" aria-hidden="true">
         <div class="modal__overlay" data-close></div>
         <div class="modal__content">
