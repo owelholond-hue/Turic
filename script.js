@@ -572,12 +572,7 @@ document.addEventListener('keydown', (e) => {
 
         try {
             const response = await fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage`, {
-                method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    chat_id: TG_CHAT_ID,
-                    text: text
-                })
             });
 
             if (response.ok) {
