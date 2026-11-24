@@ -539,7 +539,7 @@ document.addEventListener('keydown', (e) => {
 });
 
 /* =========================================================
-   12. ОТПРАВКА ФОРМЫ В TELEGRAM
+   12. ОТПРАВКА ФОРМЫ В TELEGRAM (ЧЕРЕЗ URL)
    ========================================================= */
 (function initContactForm() {
     const contactForm = document.getElementById('contactForm');
@@ -547,14 +547,12 @@ document.addEventListener('keydown', (e) => {
     if (!contactForm) return;
 
     contactForm.addEventListener('submit', async (e) => {
-        e.preventDefault(); // Отменяем стандартную отправку браузера
+        e.preventDefault();
 
-        // Собираем данные
         const name = document.getElementById('name').value.trim();
         const phone = document.getElementById('phone').value.trim();
         const email = document.getElementById('email').value.trim();
 
-        // Простая проверка (если пусто - не отправляем)
         if (!name || !phone || !email) {
             showToast('Пожалуйста, заполните все поля.');
             return;
@@ -567,17 +565,15 @@ document.addEventListener('keydown', (e) => {
 
         const TG_TOKEN = '9125330263:AAHDK0MmPHTk29WsQi0BgEilKYgIZxkOCEY';
         const TG_CHAT_ID = '1124885647';
-        const text = `🔔 Новая заявка с сайта!\n\n👤 Имя: ${name}\n📞 Телефон: ${phone}\n✉️ Email: ${email}`;
+        
+        // Формируем текст и кодируем его для URL (чтобы пробелы и переносы строк работали)
+        const text = encodeURIComponent(`🔔 Новая заявка!\n\nИмя: ${name}\nТелефон: ${phone}\nEmail: ${email}`);
+        
+        // Формируем ссылку. Обратите внимание: без POST и JSON, только GET
+        const url = `https://api.telegram.org/bot${TG_TOKEN}/sendMessage?chat_id=${TG_CHAT_ID}&text=${text}`;
 
         try {
-            const response = await fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    chat_id: TG_CHAT_ID,
-                    text: text
-                })
-            });
+            const response = await fetch(url); // Обычный GET запрос
 
             if (response.ok) {
                 contactForm.reset();
@@ -587,7 +583,7 @@ document.addEventListener('keydown', (e) => {
                 }
                 showToast('Спасибо! Заявка отправлена.');
             } else {
-                throw new Error('Ошибка сервера Telegram');
+                throw new Error('Ошибка Telegram');
             }
         } catch (err) {
             showToast('Ошибка отправки. Проверьте интернет.');
