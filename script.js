@@ -539,7 +539,7 @@ document.addEventListener('keydown', (e) => {
 });
 
 /* =========================================================
-   12. ОТПРАВКА ФОРМЫ В TELEGRAM (БЕЗ СТРОГОЙ JS-ВАЛИДАЦИИ)
+   12. ОТПРАВКА ФОРМЫ В TELEGRAM
    ========================================================= */
 (function initContactForm() {
     const contactForm = document.getElementById('contactForm');
@@ -547,14 +547,15 @@ document.addEventListener('keydown', (e) => {
     if (!contactForm) return;
 
     contactForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
+        e.preventDefault(); // Отменяем стандартную отправку браузера
 
-        const name = document.getElementById('name');
-        const phone = document.getElementById('phone');
-        const email = document.getElementById('email');
+        // Собираем данные
+        const name = document.getElementById('name').value.trim();
+        const phone = document.getElementById('phone').value.trim();
+        const email = document.getElementById('email').value.trim();
 
-        // Простая проверка на пустоту (чтобы не отправлять совсем пустую форму)
-        if (!name.value.trim() || !phone.value.trim() || !email.value.trim()) {
+        // Простая проверка (если пусто - не отправляем)
+        if (!name || !phone || !email) {
             showToast('Пожалуйста, заполните все поля.');
             return;
         }
@@ -564,15 +565,18 @@ document.addEventListener('keydown', (e) => {
         submitBtn.disabled = true;
         submitBtn.textContent = 'Отправка...';
 
-        // ВАШИ ДАННЫЕ ИЗ TELEGRAM
         const TG_TOKEN = '9125330263:AAHDK0MmPHTk29WsQi0BgEilKYgIZxkOCEY';
         const TG_CHAT_ID = '1124885647';
-
-        const text = `🔔 Новая заявка с сайта!\n\n👤 Имя: ${name.value.trim()}\n📞 Телефон: ${phone.value.trim()}\n✉️ Email: ${email.value.trim()}`;
+        const text = `🔔 Новая заявка с сайта!\n\n👤 Имя: ${name}\n📞 Телефон: ${phone}\n✉️ Email: ${email}`;
 
         try {
             const response = await fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage`, {
+                method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    chat_id: TG_CHAT_ID,
+                    text: text
+                })
             });
 
             if (response.ok) {
